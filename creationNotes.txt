@@ -1,0 +1,4 @@
+inventory array
+send as console.table
+
+do not have to be in Burly
