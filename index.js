@@ -86,7 +86,32 @@ let invite = new Item("invitation", "The invitation is too smudged to read fully
 allItems.push(invite);
 
 let guestList = new Item("guest list", "The list reads, 'My dearest Elizabeth, the Reverend Green, the Honorable Colonel Mustard, the lovely Miss Scarlett, and Professor Plum.' A note at the bottom has been crossed out, but you can tell that it seems to be a reminder to its author to have a 'Mrs. White' obtain the finest rib eye.");
+allItems.push(guestList);
 
+let book = new Item("book with yellow handkerchief for a placeholder", "You pick up the book and observe its title is 'War and Peace'. You turn to the spot where the handkerchief sits and begin to read. You find yourself becoming very, very, tired...");
+allItems.push(book);
+
+let loveNote = new Item("hand-written love note", "Blech! It's full of mushy love stuff and smells overpoweringly like men's cologne. But you observe that it is signed by the name of 'John Boddy.");
+allItems.push(loveNote);
+
+let key = new Item("old-fashioned, iron skeleton key", "You pick up the key. It reads 'Conservatory.'");
+allItems.push(key); // end of readable items
+
+let cufflinks = new Item("pair of emerald cufflinks engraved with the letter 'G'.");
+allItems.push(cufflinks);
+
+let lipstick = new Item("half-used stick of bright-red lipstick");
+allItems.push(lipstick);
+
+let handFan = new Item("hand fan resembling the feathers of a peacock");
+allItems.push(handFan);
+
+let apron = new Item("apron");
+allItems.push(apron);
+
+let dagger = new Item("small dagger");
+allItems.push(dagger);
+// end of Items
 
 //* List of Rooms:
 let roomList = [];
@@ -104,37 +129,32 @@ roomList.push(library);
 let study = new Room("Study", "The Study is a quiet, small reading room with an old-fashioned desk halfway surrounded by large windows allowing a generous view of the north and the west sides of the expansive property. A single door leads you back to the Library.", ["Library"], "desk", "old-fashioned, iron skeleton key");
 roomList.push(study);
 
-let billiardRoom = new Room("Billiard Room", "The Billiard Room is half-filled with a pool table in pristine condition, but there's still room for a small workbench in the corner, and of course, a set of brand-new Canadian maple pool sticks. The room is bordered by three doors, each on its own wall while the western wall permits rays of sunshine to come through. You've come from the Library to the north, and your eye is drawn to the intricately carved door leading to the west. Its mere presence seemed to indicate to you that years of laughter and joy had once dwelt on its opposite side. The people who enjoyed that wonderful time must have had a ball.", ["Library", "Ballroom", "Western Hall"], "workbench", "a pair of emerald cufflinks engraved with the letter 'G'.");
+let billiardRoom = new Room("Billiard Room", "The Billiard Room is half-filled with a pool table in pristine condition, but there's still room for a small workbench in the corner, and of course, a set of brand-new Canadian maple pool sticks. The room is bordered by three doors, each on its own wall while the western wall permits rays of sunshine to come through. You've come from the Library to the north, and your eye is drawn to the intricately carved door leading to the west. Its mere presence seemed to indicate to you that years of laughter and joy had once dwelt on its opposite side. The people who enjoyed that wonderful time must have had a ball.", ["Library", "Ballroom", "Western Hall"], "workbench", "pair of emerald cufflinks engraved with the letter 'G'.");
 roomList.push(billiardRoom);
 
 let ballroom = new Room("Ballroom", "The Ballroom is similar to the Main Hall with its vaulted ceilings, double doors, and gorgeous chandelier, but the walls are decorated with a dazzling gold wallpaper and elegant wainscoting. In one corner you find a shining ebony grand piano with clean white ivory keys, while in others there are small sitting areas for those who may need a break from their waltzing and strutting. Next to another beautifully-carved door labeled 'Eastern Hall', a stunningly large painting of local landscape announced its presence to the room.", ["Billiard Room", "Main Hall", "Eastern Hall"], "piano", "hand-written love note");
 roomList.push(ballroom);
 
-let lounge = new Room("Lounge", "The Lounge is a cozy corner on the east side of the mansion boasting bay windows, a chaise lounge, a couch, and a window seat. Its only door leads you back to the Eastern Hall.", ["Eastern Hall"], "window seat", "bright-red lipstick");
+let lounge = new Room("Lounge", "The Lounge is a cozy corner on the east side of the mansion boasting bay windows, a chaise lounge, a couch, and a window seat. Its only door leads you back to the Eastern Hall.", ["Eastern Hall"], "window seat", "half-used stick of bright-red lipstick");
 roomList.push(lounge);
 
-let diningRoom = new Room("Dining Room", "The Dining Room is a large room that appears to be paying homage to the Victorian era. The large satin birch table, positioned in the middle of the room, is set for six, but seats ten. An empty buffet lines the northern wall while a china cabinet tucks itself in to the southwestern corner of the room. A small table in the corner hosts an ornate teapot. The lone door in the room will return you to the Eastern Hall.", ["Eastern Hall"], "buffet", "fan resembling the feathers of a peacock");
+let diningRoom = new Room("Dining Room", "The Dining Room is a large room that appears to be paying homage to the Victorian era. The large satin birch table, positioned in the middle of the room, is set for six, but seats ten. An empty buffet lines the northern wall while a china cabinet tucks itself in to the southwestern corner of the room. A small table in the corner hosts an ornate teapot. The lone door in the room will return you to the Eastern Hall.", ["Eastern Hall"], "buffet", "hand fan resembling the feathers of a peacock");
 roomList.push(diningRoom);
 
 let kitchen = new Room("Kitchen", "The Kitchen is a disaster zone compared to the other rooms you've seen. Pots have boiled over, the sink was left running, and pans are blackened with the ashes of former food. The oven and stove are off now, but you can't help but wonder who was in the middle of cooking dinner? Where did they go? Perhaps they ran out the door through the backyard? What caused them to leave in such an obvious hurry? Finally, you observe that the floor is very wet and dirty. It probably could use a good mopping.", ["Eastern Hall", "Backyard"], "floor", "apron");
 roomList.push(kitchen);
 
-let conservatory = new Room("Conservatory", "The Conservatory is very warm this time of year with sun pouring in from just about every angle. Even the ceiling is made of windows! With all those windows, there was barely enough room for the single door that you'd come through. The room is otherwise filled with a variety of beautiful houseplants: flowers, ferns, succulents, and even a large venus fly trap.", ["Western Hall"], "venus fly trap", "small dagger");
+let conservatory = new Room("Conservatory", "The Conservatory is very warm this time of year with sun pouring in from just about every angle. Even the ceiling is made of windows! With all those windows, there was barely enough room for the single door that you'd come through. The room is otherwise filled with a variety of beautiful houseplants: flowers, ferns, succulents, and even a large venus fly trap.", ["Western Hall"], "large venus fly trap", "small dagger");
 roomList.push(conservatory);
-
 // end of Rooms
 
 //* List of Locations
-locations = [];
 
 let easternHall = new Location("Eastern Hall", "The Eastern Hall is an L-shaped corridor with four cedar doors: three are adorned with crystal knobs and boast intricate edging. The southernmost door, tucked around the corner, is plain and unassuming. One might assume that the employees of the mansion were the only ones to frequent it.The northernmost door is decorated with a hanging sign reading 'Lounge'.", ["Lounge", "Ballroom", "Dining Room", "Kitchen"]);
-locations.push(easternHall);
 
 let backyard = new Location("Backyard", "The backyard seems to spread several acres from your vantage point. It appears to have been the host of a recent croquet match. Additionally, a single set of polished croquet balls sits alone on the finely-decorated patio just outside of another exterior door which appears to lead to a hall on the west side of the building. Perhaps someone didn't make it in time for the game?", ["Kitchen", "Western Hall"]);
-locations.push(backyard);
 
-let westernHall = new Location("Western Hall", "The Western Hall appears to be a short corridor with access to the backyard. Two doors line its brief stretch: one to the north, and the other to the south. You note that the one towards the south has a conservative greenish hue to it, and a picture of a fern is hung there upon it. The northern door appears to be familiar.", ["Backyard", "Billiard Room", "Conservatory"]);
-locations.push(westernHall);
+let westernHall = new Location("Western Hall", "The Western Hall appears to be a short corridor with access to the backyard. Two doors line its brief stretch: one to the north, and the other to the south. You note that the one towards the south has a greenish hue to it, and a picture of a fern is hung there upon it. The northern door looks familiar to you for some reason.", ["Backyard", "Billiard Room", "Conservatory"]);
 
 // end of Locations
 
@@ -156,24 +176,12 @@ const reverseCall = {
   "loun": lounge,
 };
 
-/* 
-! Not needed??
-const returnCall = {
-  frontYard: ["Front Yard"],
-  mainHall: ["Main Hall"],
-  library: ["Library"],
-  study: ["Study"],
-  billiardRoom: ["Billiard Room"],
-  westernHall: ["Western Hall"],
-  conservatory: ["Conservatory"],
-  backyard: ["Backyard"],
-  kitchen: ["Kitchen"],
-  easternHall: ["Eastern Hall"],
-  ballroom: ["Ballroom"],
-  diningRoom: ["Dining Room"],
-  lounge: ["Lounge"]
-};
-*/
+const itemCall = {
+  "invi": invite,
+  "gues": guestList,
+  "book": book,
+  "love": loveNote
+}
 
 //* Read Room Answer Function (& Change Room if Allowed)
 function convertRoomResponse(inputRoom) {
@@ -225,7 +233,6 @@ convertRoomResponse("Lounge");
 convertRoomResponse("Eastern Hall");
 convertRoomResponse("Dining Room");
 convertRoomResponse("Eastern Hall");
-*/
 currentLocation = easternHall;
 convertRoomResponse("Kitchen");
 convertRoomResponse("Backyard");
@@ -236,6 +243,8 @@ convertRoomResponse("west");
 convertRoomResponse("cons");
 convertRoomResponse("west");
 console.log(traveledPlaces);
+*/
+console.log(allItems);
 
 //!start();
 
