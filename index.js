@@ -39,6 +39,7 @@ class Location {
   // look method returns location description
   look() {
     console.log(this.description + "\n");
+    play();
   }
 }
 
@@ -94,8 +95,8 @@ allItems.push(book);
 let loveNote = new Item("hand-written love note", "Blech! It's full of mushy love stuff and smells overpoweringly like men's cologne. But you observe that it is signed by the name of 'John Boddy.");
 allItems.push(loveNote);
 
-let key = new Item("old-fashioned, iron skeleton key", "You pick up the key. It reads 'Conservatory.'");
-allItems.push(key); // end of readable items
+let ironKey = new Item("old-fashioned, iron skeleton key", "You pick up the key. It reads 'Conservatory.'");
+allItems.push(ironKey); // end of readable items
 
 let cufflinks = new Item("pair of emerald cufflinks engraved with the letter 'G'.");
 allItems.push(cufflinks);
@@ -120,7 +121,7 @@ let traveledPlaces = [];
 let frontYard = new Room("Front Yard", "The Front Yard is finely manicured and adorned with hedges, flower beds, and a stone walkway. One might assume that the gardener had just visited within the last day or two. One also couldn't help but notice the towering mansion that the yard belongs to, boasting stained-glass windows and a grand arch over its tall, dark chestnut door. Centered on the door was a perfectly-round golden door knocker, merely a tease to anyone who thought they might be tall enough to reach it.", ["Main Hall"], "hedges", "invitation");
 roomList.push(frontYard);
 
-let mainHall = new Room("Main Hall", "The Main Hall is a grand entrance to the mansion featuring dazzling chandelier hanging from its vaulted ceiling. The ceiling is edged by beautiful crown molding. Within the room lies a single table with one drawer. Your eye is drawn to the immaculate doors pointing to the west and south. The western door is smaller than its counterpart -- perhaps it leads to a library or something of that nature?", ["Library", "Ballroom"], "table", "guest list");
+let mainHall = new Room("Main Hall", "The Main Hall is a grand entrance to the mansion featuring dazzling chandelier hanging from its vaulted ceiling. The ceiling is edged by beautiful crown molding. Within the room lies a single table with one drawer. Your eye is drawn to the immaculate doors pointing to the west and south. The western door is smaller than its counterpart -- perhaps it leads to a library or something of that nature?", ["Library", "Ballroom", "Front Yard"], "table", "guest list");
 roomList.push(mainHall);
 
 let library = new Room("Library", "The library is a room with three doors, otherwise filled with floor-to-ceiling bookshelves, reading nooks, and a coffee table. How odd! There are no desks where one might study a book. Just a door back to the Main Hall and doors to the north and south. The southern door is marked with billiard sticks.", ["Main Hall", "Study", "Billiard Room"], "bookshelves", "book with a yellow handkerchief for a placeholder");
@@ -160,7 +161,7 @@ let westernHall = new Location("Western Hall", "The Western Hall appears to be a
 
 //* State Machines
 const reverseCall = {
-  //returns Object variable names for modified user input
+  //returns Object Room variable names for modified user input
   "fron": frontYard,
   "main": mainHall,
   "libr": library,
@@ -177,13 +178,20 @@ const reverseCall = {
 };
 
 const itemCall = {
+  // returns Object Item variable names for modified user input
   "invi": invite,
   "gues": guestList,
   "book": book,
-  "love": loveNote
+  "love": loveNote,
+  "iron": ironKey,
+  "cuff": cufflinks,
+  "lips": lipstick,
+  "hand": handFan,
+  "apro": apron,
+  "dagg": dagger
 }
 
-//* Read Room Answer Function (& Change Room if Allowed)
+//* Room Answer Function (& Change Room if Allowed)
 function convertRoomResponse(inputRoom) {
   // cut user response down to four letters
   let convertResponse = inputRoom.substring(0, 4);
@@ -208,55 +216,102 @@ function convertRoomResponse(inputRoom) {
     // if seekOption is not contained as an adjacent to currentLocation
     console.log(`Sorry, you can't get to the ${inputRoom} from the ${currentLocation.name}.`);
   }
+} // end of convertRoomResponse function
+
+//* Item Answer Function
+async function convertItemResponse(inputItem) {
+  // cut user response down to four letters
+  let convertItemResponse = inputRoom.substring(0, 4);
+  // lowercase user response
+  let lowercaseConverted = convertItemResponse.toLowerCase();
+  // use lookup table to find the corresponding Object's variable
+  let seekItem = itemCall[lowercaseConverted];
+  // analyze what the lookup table returns
+  if (seekItem == undefined) {
+    // if nothing can be found
+    console.log(`Sorry, I don't know what ${inputItem} is.`);
+    play();
+  } else if (inventory.includes(seekItem)) {
+    // if the user has the item, give options to look at or read(?)
+    let yesNo = await ask(`You dig through your backpack and find the ${seekItem.name}! Would you like to read it?\n`);
+    let chopAns = yesNo[0];
+    let capChop = chopAns.toUpperCase();
+    if (capChop === "Y") {
+      seekItem.read();
+      play();
+    } else {
+      play();
+    }
+  } else {
+    console.log(`Sorry, but it doesn't look like you have ${inputItem} in your inventory.`);
+    play();
+  }
+} // end of convertItemResponse function
+
+async function moveRoom() {
+  // after we have determined the user wants to move, ask where
+  let moveResponse = await ask("Where do you want to go?\n");
+  // run room changing function which analyzes user response
+  convertRoomResponse(moveResponse);
+  play();
 }
 
-//* Room Changing Function
+async function search() {
+  // after we have determined the user wants to search the room, ask what part of the room (or thing) they want to search
+  let searchResponse = await ask("What do you want to search?\n");
+  // run search method from Room class which analyzes user response
+  currentLocation.search(searchResponse);
+  play();
+}
+
+async function collect() {
+  // after we have determined the user wants to collect or pick up an item (and add it to their inventory), ask which item
+  let collectResponse = await ask("What do you want to pick up?\n");
+  // run addToInventory method from Room class which analyzes user response
+  currentLocation.addToInventory(collectResponse);
+  play();
+}
+
+async function findReadable() {
+  // after we have determined the user wants to read an item, ask which item
+  let readResponse = await ask("Which item do you want to read?\n");
+  // run convertItemResponse function which edits and analyzes user response
+  convertItemResponse(readResponse);
+}
+
+async function play() {
+  // this function will read what action the user wants to take
+  let choice = await ask("\nWhat do you want to do?\n");
+  let playChoice = choice.toLowerCase();
+  let arrayChoice = playChoice.split(" ");
+  // look for keywords within arrayChoice
+  if (arrayChoice.includes("move") || arrayChoice.includes("go") || arrayChoice.includes("enter")) {
+    moveRoom();
+  } else if (arrayChoice.includes("search")) {
+    search();
+  } else if (arrayChoice.includes("look")) {
+    currentLocation.look();
+  } else if (arrayChoice.includes("collect") || arrayChoice.includes("grab") || arrayChoice.includes("add")) {
+    collect();
+  } else if (arrayChoice.includes("pick") && arrayChoice.includes("up")) {
+    collect();
+  } else if (arrayChoice.includes("read")) {
+    findReadable();
+  } else {
+    console.log("I don't know what that is. Try using a keyword like 'search', 'look', 'collect', 'grab', 'add', 'pick up', or 'read'.");
+    play();
+  }
+}
 
 let currentLocation = frontYard;
 
-//! Test Section ***************************
-//? Game starts in frontYard
-//console.log(roomList);
-//console.log(locations);
-// console.log(currentLocation.nextTo);
-//console.log(currentLocation);
-/* 
-!testing convertRoomResponse
-convertRoomResponse("Main Hall");
-convertRoomResponse("Library");
-convertRoomResponse("Study");
-convertRoomResponse("Library");
-convertRoomResponse("Billiard Room");
-convertRoomResponse("Ballroom");
-convertRoomResponse("Eastern Hall");
-convertRoomResponse("Lounge");
-convertRoomResponse("Eastern Hall");
-convertRoomResponse("Dining Room");
-convertRoomResponse("Eastern Hall");
-currentLocation = easternHall;
-convertRoomResponse("Kitchen");
-convertRoomResponse("Backyard");
-convertRoomResponse("west hall");
-convertRoomResponse("bill");
-convertRoomResponse("cons")
-convertRoomResponse("west");
-convertRoomResponse("cons");
-convertRoomResponse("west");
-console.log(traveledPlaces);
-*/
-console.log(allItems);
-
-//!start();
+start();
 
 async function start() {
   const welcomeMessage = `You are standing in the front yard of a grand mansion. While neither completely abandoned nor haunted, it holds an eerie aura about it, as if it has a story to tell you.\nNo one appears to be home right now. The front door towers in front of you tauntingly, daring you to enter. Do you dare go in?`;
-  let answer = await ask(welcomeMessage);
-  // cut down answer to first letter
-  let chopAnswer = answer[0];
-  // capitalize chopAnswer
-  let capitalizeChop = chopAnswer.toUpperCase();
-  if (capitalizeChop === "Y") {
-    console.log('\n You are shocked to find that the door is unlocked! Armed with only a backpack, you enter.');
+  console.log(welcomeMessage);
+  if (true === true) {
+    play();
   } else {
     console.log("Well, I guess some mysteries are better left alone. See you next time!");
     process.exit();
@@ -264,4 +319,4 @@ async function start() {
 }
 
 //! for now, so that code doesn't run forever:
-process.exit();
+//!process.exit();
