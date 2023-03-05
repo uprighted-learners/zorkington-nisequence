@@ -66,7 +66,8 @@ class Room extends Location {
     let newThingy = thingy.toLowerCase();
     if (newThingy == this.treasure) {
       console.log(`You eagerly tuck the ${thingy} away in your backpack. Who knows? It could be useful in the future!`);
-      inventory.push(this.treasure);
+      pushToInventory(this.treasure);
+      //! inventory.push(this.treasure);
       this.treasure = "dust bunnies";
     } else {
       console.log(`You can't add ${newThingy} to your inventory.`);
@@ -191,6 +192,18 @@ const itemCall = {
   "dagg": dagger
 }
 
+//* Inventory Management System
+function pushToInventory(object) {
+  // cut user response down to four letters
+  let convertInventoryItem = object.substring(0, 4);
+  // lowercase user response
+  let lowercaseItem = convertInventoryItem.toLowerCase();
+  // use lookup table to find the corresponding Object's variable
+  let identifyItem = itemCall[lowercaseItem];
+  // add what the lookup table returns
+  inventory.push(identifyItem);
+}
+
 //* Room Answer Function (& Change Room if Allowed)
 function convertRoomResponse(inputRoom) {
   // cut user response down to four letters
@@ -221,7 +234,7 @@ function convertRoomResponse(inputRoom) {
 //* Item Answer Function
 async function convertItemResponse(inputItem) {
   // cut user response down to four letters
-  let convertItemResponse = inputRoom.substring(0, 4);
+  let convertItemResponse = inputItem.substring(0, 4);
   // lowercase user response
   let lowercaseConverted = convertItemResponse.toLowerCase();
   // use lookup table to find the corresponding Object's variable
@@ -232,8 +245,8 @@ async function convertItemResponse(inputItem) {
     console.log(`Sorry, I don't know what ${inputItem} is.`);
     play();
   } else if (inventory.includes(seekItem)) {
-    // if the user has the item, give options to look at or read(?)
-    let yesNo = await ask(`You dig through your backpack and find the ${seekItem.name}! Would you like to read it?\n`);
+    // if the user has the item, give option to read
+    let yesNo = await ask(`You dig through your backpack and find the ${seekItem.called}! Would you like to read it?\n`);
     let chopAns = yesNo[0];
     let capChop = chopAns.toUpperCase();
     if (capChop === "Y") {
@@ -273,6 +286,7 @@ async function collect() {
 }
 
 async function findReadable() {
+  // ! creates "do you want to read" loop-of-sorts, maybe reword this?
   // after we have determined the user wants to read an item, ask which item
   let readResponse = await ask("Which item do you want to read?\n");
   // run convertItemResponse function which edits and analyzes user response
@@ -291,11 +305,14 @@ async function play() {
     search();
   } else if (arrayChoice.includes("look")) {
     currentLocation.look();
-  } else if (arrayChoice.includes("collect") || arrayChoice.includes("grab") || arrayChoice.includes("add")) {
+  } else if (arrayChoice.includes("collect") || arrayChoice.includes("add")) {
     collect();
   } else if (arrayChoice.includes("pick") && arrayChoice.includes("up")) {
     collect();
+  } else if (arrayChoice.includes("grab") && arrayChoice.includes("inventory")) {
+    // see below
   } else if (arrayChoice.includes("read")) {
+    //! reading redundancy - use different wording as above?
     findReadable();
   } else {
     console.log("I don't know what that is. Try using a keyword like 'search', 'look', 'collect', 'grab', 'add', 'pick up', or 'read'.");
