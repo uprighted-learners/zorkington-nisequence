@@ -14,7 +14,7 @@ function ask(questionText) {
   * Index At-A-Glance
     - Classes & Methods
     - Arrays
-    - State Machines
+    - Dictionaries
     - Functions
     - Async Functions
     - Default Settings
@@ -110,8 +110,12 @@ class Room extends Location {
   }
   
   addToInventory(thingy) {
+    // abbreviate input
+    let abbrThingy = thingy.substring(0, 10);
+    // abbreviate treasure
+    let abbrTreasure = this.treasure.substring(0, 10);
     // analyze input that user desires to add to inv
-    if (thingy == this.treasure && this.treasure != "dust bunnies") {
+    if (abbrThingy == abbrTreasure && this.treasure != "dust bunnies") {
       // if user selects the takeable item correctly
       console.log(`You eagerly tuck the ${thingy} away in your backpack. Who knows? It could be useful in the future!`);
       if (iteration === 1) {
@@ -131,7 +135,7 @@ class Room extends Location {
         playerEnergy = playerEnergy + 10;
         this.treasure = "dust bunnies";
       }
-    } else if (thingy == this.treasure && this.treasure == "dust bunnies") {
+    } else if (abbrThingy == abbrTreasure && this.treasure == "dust bunnies") {
       // if user has already taken the thing from the searchable item
       console.log(`You've already been here, the dust bunnies aren't going to help you.`)
       playerEnergy = playerEnergy - 5;
@@ -146,48 +150,48 @@ class Room extends Location {
 let allItems = [];
 // track allItems to ensure win condition is met
 
-let invite = new Item("invitation", 1, "The invitation is too smudged and torn to read fully, but you're able to make out the fact that there was a party at this house recently. You can also conclude that there are some vague directions about how to get from the Main Hall to the Dining Room.");
-allItems.push(invite);
+let invite = new Item("invitation", 2, "The invitation is too smudged and torn to read fully, but you're able to make out the fact that there was a party at this house recently. You can also conclude that there are some vague directions about how to get from the Main Hall to the Dining Room.");
+allItems.push(invite.called);
 
-let guestList = new Item("guest list", 1, "The list reads, 'My dearest Elizabeth, the Reverend Green, the Honorable Colonel Mustard, the lovely Miss Scarlett, and Professor Plum.' A note at the bottom has been crossed out, but you can tell that it seems to be a reminder to its author to have a 'Mrs. White' obtain the finest rib eye.");
-allItems.push(guestList);
+let guestList = new Item("guest list", 2, "The list reads, 'My dearest Elizabeth, the Reverend Green, the Honorable Colonel Mustard, the lovely Miss Scarlett, and Professor Plum.' You note that each of these names have been crossed off, as if attendance had been taken. A note at the bottom seems to be a reminder to its author to have a 'Mrs. White' obtain the finest rib eye.");
+allItems.push(guestList.called);
 
 let book = new Item("book with yellow handkerchief for a placeholder", -15, "You pick up the book and observe its title is 'War and Peace'. You turn to the spot where the handkerchief sits and begin to read. You find yourself becoming very, very, tired...");
-allItems.push(book);
+allItems.push(book.called);
 
-let loveNote = new Item("hand-written love note", 1, "Blech! It's full of mushy love stuff and smells overpoweringly like men's cologne. But you observe that it is signed by the name of 'John Boddy.");
-allItems.push(loveNote);
+let loveNote = new Item("hand-written love note", 1, "Blech! It's full of mushy love stuff and smells overpoweringly like men's cologne. But you observe that it is signed by the name of 'John Boddy.'");
+allItems.push(loveNote.called);
 
-let ironKey = new Item("old-fashioned, iron skeleton key", 1, "You pick up the key. It reads 'Conservatory.'");
-allItems.push(ironKey); // end of readable items
+let ironKey = new Item("old-fashioned, iron skeleton key", 2, "You pick up the key. It reads 'Conservatory.'");
+allItems.push(ironKey.called); // end of readable items
 
-let cufflinks = new Item("pair of emerald cufflinks engraved with the letter 'g'", 0);
-allItems.push(cufflinks);
+let cufflinks = new Item("pair of emerald cufflinks engraved with the letter 'G'", 0);
+allItems.push(cufflinks.called);
 
-let lipstick = new Item("half-used stick of bright-red lipstick", -5, "It reads, 'Maybelline Sensational Vivids");
-allItems.push(lipstick);
+let lipstick = new Item("half-used stick of bright-red lipstick", -5, "It reads, 'Maybelline Sensational Vivids'");
+allItems.push(lipstick.called);
 
 let handFan = new Item("hand fan resembling the feathers of a peacock", 0);
-allItems.push(handFan);
+allItems.push(handFan.called);
 
 let apron = new Item("apron", -5);
-allItems.push(apron);
+allItems.push(apron.called);
 
 let dagger = new Item("small dagger", 0);
-allItems.push(dagger);
+allItems.push(dagger.called);
 // end of Items
 
 //* List of Rooms:
 
 let frontYard = new Room("Front Yard", "The Front Yard is finely manicured and adorned with hedges, flower beds, and a stone walkway. One might assume that the gardener had just visited within the last day or two. One also couldn't help but notice the towering mansion that the yard belongs to, boasting stained-glass windows and a grand arch over its tall, dark chestnut door. Centered on the door was a perfectly-round golden door knocker, merely a tease to anyone who thought they might be tall enough to reach it.", ["Main Hall"], "hedges", "invitation");
 
-let mainHall = new Room("Main Hall", "The Main Hall is a grand entrance to the mansion featuring dazzling chandelier hanging from its vaulted ceiling. The ceiling is edged by beautiful crown molding. Within the room lies a single table with one drawer. Your eye is drawn to the immaculate doors pointing to the west and south. The western door is smaller than its counterpart -- perhaps it leads to a library or something of that nature?", ["Library", "Ballroom", "Front Yard"], "table", "guest list");
+let mainHall = new Room("Main Hall", "The Main Hall is a grand entrance to the mansion featuring dazzling chandelier hanging from its vaulted ceiling. The ceiling is edged by beautiful crown molding. Within the room lies a single table with one drawer and a telephone. Your eye is drawn to the immaculate doors pointing to the west and south. The western door is smaller than its counterpart -- perhaps it leads to a library or something of that nature?", ["Library", "Ballroom", "Front Yard"], "table", "guest list");
 
 let library = new Room("Library", "The library is a room with three doors, otherwise filled with floor-to-ceiling bookshelves, reading nooks, and a coffee table. How odd! There are no desks where one might study a book. Just a door back to the Main Hall and doors to the north and south. The southern door is marked with billiard sticks.", ["Main Hall", "Study", "Billiard Room"], "bookshelves", "book with a yellow handkerchief for a placeholder");
 
 let study = new Room("Study", "The Study is a quiet, small reading room with an old-fashioned desk halfway surrounded by large windows allowing a generous view of the north and the west sides of the expansive property. A single door leads you back to the Library.", ["Library"], "desk", "old-fashioned, iron skeleton key");
 
-let billiardRoom = new Room("Billiard Room", "The Billiard Room is half-filled with a pool table in pristine condition, but there's still room for a small workbench in the corner, and of course, a set of brand-new Canadian maple pool sticks. The room is bordered by three doors, each on its own wall while the western wall permits rays of sunshine to come through. You've come from the Library to the north, and your eye is drawn to the intricately carved door leading to the west. Its mere presence seemed to indicate to you that years of laughter and joy had once dwelt on its opposite side. The people who enjoyed that wonderful time must have had a ball.", ["Library", "Ballroom", "Western Hall"], "workbench", "pair of emerald cufflinks engraved with the letter 'g'");
+let billiardRoom = new Room("Billiard Room", "The Billiard Room is almost half-filled with a pool table in pristine condition -- it appears that its most recent game of 8-ball had not yet been completed. The room also holds a small workbench in the corner, and of course, a set of brand-new Canadian maple pool sticks. The room is bordered by three doors, each on its own wall while the western wall permits rays of sunshine to come through. You've come from the Library to the north, and your eye is drawn to the intricately carved door leading to the west. Its mere presence seemed to indicate to you that years of laughter and joy had once dwelt on its opposite side. The people who enjoyed that wonderful time must have had a ball.", ["Library", "Ballroom", "Western Hall"], "workbench", "pair of emerald cufflinks engraved with the letter 'G'");
 
 let ballroom = new Room("Ballroom", "The Ballroom is similar to the Main Hall with its vaulted ceilings, double doors, and gorgeous chandelier, but the walls are decorated with a dazzling gold wallpaper and elegant wainscoting. In one corner you find a shining ebony grand piano with clean white ivory keys, while in others there are small sitting areas for those who may need a break from their waltzing and strutting. Next to another beautifully-carved door pointing to the east, a stunningly large painting of local landscape announced its presence to the room.", ["Billiard Room", "Main Hall", "Eastern Hall"], "piano", "hand-written love note");
 
@@ -206,12 +210,12 @@ conservatory.locked = true;
 
 let easternHall = new Location("Eastern Hall", "The Eastern Hall is an L-shaped corridor with four cedar doors: three are adorned with crystal knobs and boast intricate edging. The southernmost door, tucked around the corner, is plain and unassuming. One might assume that the employees of the mansion were the only ones to frequent it.The northernmost door is decorated with a hanging sign reading 'Lounge'.", ["Lounge", "Ballroom", "Dining Room", "Kitchen"]);
 
-let backyard = new Location("Backyard", "The backyard seems to spread several acres from your vantage point. It appears to have been the host of a recent croquet match. Additionally, a single set of polished croquet balls sits alone on the finely-decorated patio just outside of another exterior door on the west side of the building. Perhaps someone didn't make it in time for the game?", ["Kitchen", "Western Hall"]);
+let backyard = new Location("Backyard", "The backyard seems to spread several acres from your vantage point. It appears to have been the host of a recent croquet match. Additionally, a single set of polished croquet balls sits alone on the finely-decorated patio just outside of another exterior door on the west side of the building. Perhaps someone didn't make it in time for the game?With all the crime scene tape on the exterior door to the east, it doesn't appear that a rematch will be happening anytime soon.", ["Kitchen", "Western Hall"]);
 
 let westernHall = new Location("Western Hall", "The Western Hall appears to be a short corridor with access to the backyard. Two doors line its brief stretch: one to the north, and the other to the south. You note that the one towards the south has a greenish hue to it, and a picture of a fern is hung there upon it. The northern door looks familiar to you for some reason.", ["Backyard", "Billiard Room", "Conservatory"]);
 // end of Locations
 
-//* State Machines
+//* Dictionaries
 const reverseCall = {
   //returns Object Room variable names for modified user input
   "fron": frontYard,
@@ -233,6 +237,7 @@ const itemCall = {
   // returns Object Item variable names for modified user input and also for "treasure" names from Room objects
   "invit": invite,
   "guest": guestList,
+  "book": book,
   "book ": book,
   "hand-": loveNote,
   "loven": loveNote,
@@ -250,6 +255,7 @@ const itemCall = {
   "brigh": lipstick,
   "lipst": lipstick,
   "handf": handFan,
+  "hand ": handFan,
   "handF": handFan,
   "fan": handFan,
   "apron": apron,
@@ -267,7 +273,7 @@ function listInventory() {
   } else {
     console.log(`You open your backpack and see...`);
     checkableInv = [...inventory];
-    checkableInv.forEach(invItem => console.log(invItem["called"]));
+    checkableInv.forEach(invItem => console.log("..." + invItem["called"]));
   }
 }
 
@@ -312,6 +318,22 @@ function convertRoomResponse(inputRoom) {
     console.log(`Sorry, ${inputRoom} is not a valid move from the ${currentLocation.name}.`);
   }
 } // end of convertRoomResponse function
+
+//* Use Phone Function
+//! needs to be tested
+// allows user to make an accusation if all items are in inventory & if not, game over
+function usePhone() {
+  // check that all items are the inventory
+  if (inventory.includes(invite) && inventory.includes(guestList) && inventory.includes(lipstick) && inventory.includes(cufflinks) && inventory.includes(loveNote) && inventory.includes(ironKey) && inventory.includes(apron) && inventory.includes(dagger) && inventory.includes(book) && inventory.includes(handFan)) {
+      // phone works
+      callPolice();
+  } else {
+      // police come
+      console.log("\nAs soon as you pick up the phone, you hear sirens surrounding the mansion. You immediately hear a megaphone blasting, 'Come out with your hands up!'");
+      console.log("You are arrested for trespassing on private property.");
+      playAgain();
+  }
+} // end of usePhone function
 
 //* Item Answer Function
 // for user to interact with items in the inventory
@@ -367,8 +389,17 @@ async function search() {
   // after we have determined the user wants to search the room, ask what part of the room (or thing) they want to search
   let searchResponse = await ask("What do you want to search?\n");
   // run search method from Room class which analyzes user response
-  currentLocation.search(searchResponse);
-  play();
+  if (currentLocation === backyard || currentLocation === westernHall || currentLocation === easternHall) {
+    // the search function breaks with these locations because they do not have the search method like rooms do
+    console.log("This area is pretty empty. Try searching elsewhere.");
+    playerEnergy = playerEnergy - 2;
+    // smaller penalty for searching this area
+    play();
+  } else {
+    // if user is in any other location, use the search method
+    currentLocation.search(searchResponse);
+    play();
+  }
 }
 
 async function collect() {
@@ -389,20 +420,18 @@ async function findReadable() {
 async function play() {
   //* this function will read what action the user wants to take
   // only state player energy if low
-  if (playerEnergy <= 15) {
-    console.log(`Your energy is currently ${playerEnergy}.`);
+  if (playerEnergy <= 20) {
+    console.log(`Your energy is getting low.`);
   }
   // check if user has won the game or ran out of energy!
-  if (inventory.includes(allItems) && playerEnergy > 0) {
+  if (inventory.includes(invite) && inventory.includes(guestList) && inventory.includes(lipstick) && inventory.includes(cufflinks) && inventory.includes(loveNote) && inventory.includes(ironKey) && inventory.includes(apron) && inventory.includes(dagger) && inventory.includes(book) && inventory.includes(handFan) && playerEnergy > 0) {
     // if win condition is met
     console.log("You win!");
-    let score = playerEnergy*12;
-    console.log(`Your score is ${score}! Congrats!`);
-    process.exit();
+    playAgain();
   } else if (playerEnergy <= 0) {
     // if energy runs out
     console.log("Sorry, you've run out of energy! Try again next time.");
-    process.exit();
+    playAgain();
   } else {
     // if win condition is not met
     // and if player still has energy
@@ -428,9 +457,9 @@ async function play() {
     } else if (arrayChoice.includes("grab") && arrayChoice.includes("inventory")) {
       // if user wants to check actions for what is in their inventory
       findReadable();
-    } else if (arrayChoice.includes("read")) {
+    } else if (arrayChoice.includes("read") || arrayChoice.includes("use")) {
       // if user wants to read an item, let them know they need to grab it from their inventory first
-      console.log("To read something in the room, use 'look around'. To read something from your inventory, you'll need to first grab it from your inventory.");
+      console.log("To read something in the room, use 'look around'. To read and/or use something from your inventory, you'll need to first grab it from your inventory.");
       play();
     } else if (arrayChoice.includes("leave") || arrayChoice.includes("exit") || arrayChoice.includes("quit") || arrayChoice.includes("run")) {
       // if user tries to leave the mansion
@@ -440,6 +469,10 @@ async function play() {
       // if user wants to check what is in their inventory
       listInventory();
       play();
+    } else if (arrayChoice.includes("call") && currentLocation === mainHall) {
+      // if user wants to use the phone in the main hall
+      usePhone();
+      //! needs to be tested
     } else {
       // if the user does not select a valid keyword/key phrase
       console.log("I don't know what that is. Try using a keyword or key phrase like 'search', 'look around', 'check inventory', 'pick up', or 'grab from inventory'.");
@@ -448,10 +481,35 @@ async function play() {
   }
 }
 
+async function playAgain() {
+  // state Score
+  let score = playerEnergy*12;
+  console.log(`\nYour score is ${score}!`);
+  // ask user if they want to play again
+  let yesNo = await ask("\nWould you like to play again?\n");
+  let chopYN = yesNo[0];
+  let uppercaseYN = chopYN.toUppercase();
+  if (uppercaseYN === "Y") {
+      // reset all settings
+      currentLocation = frontYard;
+      playerEnergy = 100;
+      inventory = "nothing";
+      iteration = 1;
+      checkableInv = [];
+      // call start function
+      start();
+  } else if (uppercaseYN === "N") {
+      console.log("Thanks for playing!");        
+      process.exit();
+  } else {
+      playAgain();
+  }
+} // end of playAgain function
+
 // set starting position
 let currentLocation = frontYard;
 // set beginning player energy
-let playerEnergy = 100;
+let playerEnergy = 0;
 // set beginning player inventory
 let inventory = "nothing";
 // settings to allow inventory & 'check inventory' to function properly
