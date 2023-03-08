@@ -291,7 +291,7 @@ async function pushToInventory(object) {
 
 //*Inventory Checker Function:
 // allows user to check inventory if there is anything inside it
-function listInventory() {
+async function listInventory() {
   if (inventory == "nothing") {
     console.log("Your backpack is empty. Try and collect an item or two first.");
   } else {
@@ -355,7 +355,7 @@ async function convertItemResponse(inputItem) {
 // ---------------------
 //* Room Answer Function (& Change Room if Allowed)
 // analyzes rooms as moveable or not moveable
-function convertRoomResponse(inputRoom) {
+async function convertRoomResponse(inputRoom) {
   // cut user response down to four letters
   let convertResponse = inputRoom.substring(0, 4);
   // lowercase user response
@@ -414,7 +414,7 @@ async function search() {
 // ---------------------
 //* Use Phone Function
 // allows user to make an accusation if all items are in inventory & if not, game over
-function usePhone() {
+async function usePhone() {
   // we have already ensured that the currentLocation is mainHall
   // check that all items are the inventory
   if (allItemsCollected === true && currentLocation === mainHall) {
@@ -430,7 +430,7 @@ function usePhone() {
   }
 } // end of usePhone function
 
-function callPolice() {
+async function callPolice() {
   // phone dialogue only
   console.log("\nSweat drips down your forehead as you pick up the phone nervously. It's obvious that there's been a murder here. You cautiously and precisely dial the number for the local police station.");
   console.log('Emergency Operator: "This is the police department, What is your emergency?"');
@@ -456,47 +456,54 @@ async function accusationChoice() {
       console.log("\n***** CONGRATULATIONS! YOU WIN!!! *****");
       // energy boost to raise score
       playerEnergy = playerEnergy + 100;
+      playAgain();
   // *Option 2: Mrs. Elizabeth Peacock
   } else if (arrayInfo.includes("Peacock") || arrayInfo.includes("Elizabeth")) {
       // lose
       console.log('You: "The crime was committed by none other than the widowed Elizabeth Peacock. She has shown no indication of appreciation for all the attention John has been providing and she simply became fed up with it."');
       console.log('Emergency Operator: "I assure you, we are investigating her quite closely. As far as we know, she was the last to see John alive. But thank you for the input."');
       // neutral guess, no score change
+      playAgain();
   // *Option 3: Miss Scarlett
   } else if (arrayInfo.includes("Scarlett")) {
       // lose
       console.log('You: "I daresay the murderer was Miss Scarlett. She was jealous of the attention that Elizabeth Peacock was receiving.');
       console.log('Emergency Operator: "Ridiculous. Miss Scarlett has plenty of her own suitors."');
-      playerEnergy = playerEnergy - 50;
+      playerEnergy = playerEnergy - 50; // wrong answer penalty
+      playAgain();
   // *Option 4: Colonel Mustard
   } else if (arrayInfo.includes("Mustard") || arrayInfo.includes("Colonel")) {
       // lose
       console.log('You: "Colonel Mustard has been acting suspicious lately... and studying books on war. And he always has that rifle with him."');
       console.log('Emergency Operator: "You are not the only one to mention that, but his innocence has already been proven. Thank you anyway." *click*');
-      playerEnergy = playerEnergy - 10;
+      playerEnergy = playerEnergy - 30; // wrong answer penalty
+      playAgain();
   // *Option 5: The Reverend Green
   } else if (arrayInfo.includes("Green") || arrayInfo.includes("Reverend")) {
       // lose
       console.log('You: "The murderer was clearly Reverend Green. His cufflinks were found only two rooms away from the murder weapon!');
       console.log('Emergency Operator: "Preposterous! He was playing pool on the opposite side of the mansion from where the body was found and from where John was last seen alive."');
-      playerEnergy = playerEnergy - 20;
+      playerEnergy = playerEnergy - 40; // wrong answer penalty
+      playAgain();
   // *Option 6: Mrs. White
   } else if (arrayInfo.includes("White")) {
       // lose
       console.log('You: "Madam, I believe it was Mrs. White. The murder was in the kitchen, after all."');
       console.log('Emergency Operator: "You are being ridiculous. She was out at the store when everything went down. Police were already on the scene when she attempted to return to the kitchen."');
-      playerEnergy = playerEnergy - 50;
+      playerEnergy = playerEnergy - 50; // wrong answer penalty
+      playAgain();
   // *Option 7: John Boddy
   } else if (arrayInfo.includes("Boddy") || arrayInfo.includes("John")) {
       // lose
       console.log('You: "Madam, I believe it was John Boddy."');
       console.log('Emergency Operator: "Nonsense! He was the one that was murdered. Stop wasting our time." *click*');
-      playerEnergy = playerEnergy - 75;
+      playerEnergy = playerEnergy - 75; // wrong answer penalty
+      playAgain();
   } else {
-      accusationChoice();
-      //! IDK why the question displays twice
+      infoType = null;
+      console.log("Hmmm... interesting guess. I'm not sure who this is.");
   }
-  playAgain();
+  accusationChoice();
 } // end of accusationChoice function
 // end of late game functions
 
@@ -577,7 +584,7 @@ async function play() {
   }
 } // end of play function
 
-function resetVal() {
+async function resetVal() {
   // reset global variables
   currentLocation = frontYard;
   playerEnergy = 100;
@@ -646,7 +653,7 @@ let allItemsCollected = false;
 
 //* Start Function
 start();
-function start() {
+async function start() {
   // the function that starts it all!
   const welcomeMessage = `You are standing in the front yard of a grand mansion. While neither completely abandoned nor haunted, it holds an eerie aura about it, as if it has a story to tell you.\nNo one appears to be home right now. The front door towers in front of you tauntingly, daring you to enter. Do you dare go in?`;
   console.log(welcomeMessage);
