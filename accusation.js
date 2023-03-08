@@ -9,9 +9,6 @@ function ask(questionText) {
   });
 }
 
-// * -------------------------------------
-
-// * NEW FUNCTION
 function usePhone() {
     // check that all items are the inventory
     if (inventory.includes(invite) && inventory.includes(guestList) && inventory.includes(lipstick) && inventory.includes(cufflinks) && inventory.includes(loveNote) && inventory.includes(ironKey) && inventory.includes(apron) && inventory.includes(dagger) && inventory.includes(book) && inventory.includes(handFan)) {

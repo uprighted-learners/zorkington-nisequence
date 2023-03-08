@@ -13,10 +13,13 @@ function ask(questionText) {
 /* 
   * Index At-A-Glance
     - Classes & Methods
-    - Arrays
+    - Objects
     - Dictionaries
     - Functions
-    - Async Functions
+      - Item Functions
+      - Room Functions
+      - Late Game Functions
+      - Play & PlayAgain Function
     - Default Settings
     - Start Function
 */
@@ -147,8 +150,6 @@ class Room extends Location {
 } // end of Room Class
 
 //* List of Possible Inventory Items:
-let allItems = [];
-// track allItems to ensure win condition is met
 
 let invite = new Item("invitation", 2, "The invitation is too smudged and torn to read fully, but you're able to make out the fact that there was a party at this house recently. You can also conclude that there are some vague directions about how to get from the Main Hall to the Dining Room.");
 allItems.push(invite.called);
@@ -265,6 +266,34 @@ const itemCall = {
 }
 // end of State Machines
 
+//* Item-Based Functions
+// ---------------------
+async function collect() {
+  // after we have determined the user wants to collect or pick up an item (and add it to their inventory), ask which item
+  let collectResponse = await ask("What do you want to pick up?\n(Be sure to enter it exactly as you found it.)\n");
+  // run addToInventory method from Room class which analyzes user response
+  currentLocation.addToInventory(collectResponse);
+  play();
+}
+
+//* Inventory Management System
+// adds collected treasures to inventory in their Item object format
+async function pushToInventory(object) {
+  // cut user response down to four letters
+  let convertInventoryItem = object.substring(0, 5);
+  // use lookup table to find the corresponding Object's variable
+  let identifyItem = itemCall[convertInventoryItem];
+  if (identifyItem == undefined) {
+    // error message that theoretically should never print (failsafe)
+    console.log("Well, this is awkward. We experienced an error while adding your item -- please try again.");
+    let obj2 = await ask("What was it that you wanted to add again?\n");
+    pushToInventory(obj2);
+  } else {
+    // add what the lookup table returns
+    inventory.push(identifyItem);
+  }
+}
+
 //*Inventory Checker Function:
 // allows user to check inventory if there is anything inside it
 function listInventory() {
@@ -276,64 +305,6 @@ function listInventory() {
     checkableInv.forEach(invItem => console.log("..." + invItem["called"]));
   }
 }
-
-//* Inventory Management System
-// adds collected treasures to inventory in their Item object format
-function pushToInventory(object) {
-  // cut user response down to four letters
-  let convertInventoryItem = object.substring(0, 5);
-  // use lookup table to find the corresponding Object's variable
-  let identifyItem = itemCall[convertInventoryItem];
-  // add what the lookup table returns
-  inventory.push(identifyItem);
-}
-
-//* Room Answer Function (& Change Room if Allowed)
-// analyzes rooms as moveable or not moveable
-function convertRoomResponse(inputRoom) {
-  // cut user response down to four letters
-  let convertResponse = inputRoom.substring(0, 4);
-  // lowercase user response
-  let lowercaseConversion = convertResponse.toLowerCase();
-  // use lookup table to find the corresponding Object's variable
-  let seekOption = reverseCall[lowercaseConversion];
-  // analyze what the lookup table returns
-  if (seekOption == undefined) {
-    // if nothing can be found
-    console.log(`Sorry, I don't know what ${inputRoom} is.`);
-  } else if (currentLocation.nextTo.includes(seekOption.name)) {
-    // if seekOption is an object & its name is contained as an adjacent to currentLocation
-    if (seekOption.locked === true) {
-      // if door is locked (only applies to Conservatory until key is used)
-      console.log(`You attempt to open the door to the ${seekOption.name}, but it's locked.`);
-      playerEnergy = playerEnergy - 5;
-    } else {
-      // if door is not locked
-      console.log(`You exit the ${currentLocation.name} and enter the ${seekOption.name}.`);
-      currentLocation = seekOption;
-      playerEnergy = playerEnergy - 5;
-    }
-  } else {
-    // if seekOption is not contained as an adjacent to currentLocation
-    console.log(`Sorry, ${inputRoom} is not a valid move from the ${currentLocation.name}.`);
-  }
-} // end of convertRoomResponse function
-
-//* Use Phone Function
-//! needs to be tested
-// allows user to make an accusation if all items are in inventory & if not, game over
-function usePhone() {
-  // check that all items are the inventory
-  if (inventory.includes(invite) && inventory.includes(guestList) && inventory.includes(lipstick) && inventory.includes(cufflinks) && inventory.includes(loveNote) && inventory.includes(ironKey) && inventory.includes(apron) && inventory.includes(dagger) && inventory.includes(book) && inventory.includes(handFan)) {
-      // phone works
-      callPolice();
-  } else {
-      // police come
-      console.log("\nAs soon as you pick up the phone, you hear sirens surrounding the mansion. You immediately hear a megaphone blasting, 'Come out with your hands up!'");
-      console.log("You are arrested for trespassing on private property.");
-      playAgain();
-  }
-} // end of usePhone function
 
 //* Item Answer Function
 // for user to interact with items in the inventory
@@ -377,6 +348,47 @@ async function convertItemResponse(inputItem) {
   }
 } // end of convertItemResponse function
 
+async function findReadable() {
+  // after we have determined the user wants to read an item, ask which item
+  let readResponse = await ask("Which item do you want?\n");
+  // run convertItemResponse function which edits and analyzes user response
+  convertItemResponse(readResponse);
+} // end of all Item-Based Functions
+
+//* Room Answer Function (& Change Room if Allowed)
+// analyzes rooms as moveable or not moveable
+function convertRoomResponse(inputRoom) {
+  // cut user response down to four letters
+  let convertResponse = inputRoom.substring(0, 4);
+  // lowercase user response
+  let lowercaseConversion = convertResponse.toLowerCase();
+  // use lookup table to find the corresponding Object's variable
+  let seekOption = reverseCall[lowercaseConversion];
+  // analyze what the lookup table returns
+  if (seekOption == undefined) {
+    // if nothing can be found
+    console.log(`Sorry, I don't know what ${inputRoom} is.`);
+  } else if (currentLocation.nextTo.includes(seekOption.name)) {
+    // if seekOption is an object & its name is contained as an adjacent to currentLocation
+    if (seekOption.locked === true) {
+      // if door is locked (only applies to Conservatory until key is used)
+      console.log(`You attempt to open the door to the ${seekOption.name}, but it's locked.`);
+      playerEnergy = playerEnergy - 10;
+      // penalty for not using Conservatory key
+    } else {
+      // if door is not locked, move
+      console.log(`You exit the ${currentLocation.name} and enter the ${seekOption.name}.`);
+      currentLocation = seekOption;
+      playerEnergy = playerEnergy - 5;
+    }
+  } else {
+    // if seekOption is not contained as an adjacent to currentLocation
+    console.log(`Sorry, ${inputRoom} is not a valid move from the ${currentLocation.name}.`);
+  }
+} // end of convertRoomResponse function
+
+//* Room-Based Functions
+// ---------------------
 async function moveRoom() {
   // after we have determined the user wants to move, ask where
   let moveResponse = await ask("Where do you want to go?\n");
@@ -390,7 +402,7 @@ async function search() {
   let searchResponse = await ask("What do you want to search?\n");
   // run search method from Room class which analyzes user response
   if (currentLocation === backyard || currentLocation === westernHall || currentLocation === easternHall) {
-    // the search function breaks with these locations because they do not have the search method like rooms do
+    // these locations do not have the search method like rooms do
     console.log("This area is pretty empty. Try searching elsewhere.");
     playerEnergy = playerEnergy - 2;
     // smaller penalty for searching this area
@@ -400,34 +412,111 @@ async function search() {
     currentLocation.search(searchResponse);
     play();
   }
-}
+} // end of Room-based functions
 
-async function collect() {
-  // after we have determined the user wants to collect or pick up an item (and add it to their inventory), ask which item
-  let collectResponse = await ask("What do you want to pick up?\n(Be sure to enter it exactly as you found it.)\n");
-  // run addToInventory method from Room class which analyzes user response
-  currentLocation.addToInventory(collectResponse);
-  play();
-}
+//* Late Game Functions
+// ---------------------
+//* Use Phone Function
+// allows user to make an accusation if all items are in inventory & if not, game over
+function usePhone() {
+  // we have already ensured that the currentLocation is mainHall
+  // check that all items are the inventory
+  if (allItemsCollected === true && currentLocation === mainHall) {
+      // phone works
+      playerEnergy = playerEnergy + 20;
+      callPolice();
+  } else {
+      // police come
+      console.log("\nAs soon as you pick up the phone, you hear sirens surrounding the mansion. You immediately hear a megaphone blasting, 'Come out with your hands up!'");
+      console.log("You are arrested for trespassing on private property.");
+      playerEnergy = playerEnergy - 100;
+      playAgain();
+  }
+} // end of usePhone function
 
-async function findReadable() {
-  // after we have determined the user wants to read an item, ask which item
-  let readResponse = await ask("Which item do you want?\n");
-  // run convertItemResponse function which edits and analyzes user response
-  convertItemResponse(readResponse);
-}
+function callPolice() {
+  // phone dialogue only
+  console.log("\nSweat drips down your forehead as you pick up the phone nervously. It's obvious that there's been a murder here. You cautiously and precisely dial the number for the local police station.");
+  console.log('Emergency Operator: "This is the police department, What is your emergency?"');
+  console.log('You stutter in disbelief that this moment is real life. "I, uh... would like to provide some potentially helpful information on an open investigation."');
+  console.log('Emergency Operator: "Which investigation might that be?"');
+  console.log('You: "The one at Boddy mansion."');
+  console.log('There is a pause. You question whether the call dropped for just a moment.');
+  console.log('Emergency Operator: "...The murder?"');
+  console.log('You: "I believe so."');
+  console.log('Emergency Operator: "All right, what information would that be? Bear in mind, you are on a recorded line."');
+  accusationChoice();
+} // end of callPolice function
+
+async function accusationChoice() {
+  // ask user to make an accusation
+  let infoType = await ask('\n(Who do you think committed the crime?)\n');
+  // switch info to an array which is searchable
+  let arrayInfo = infoType.split(" ");
+  // *Option 1: Prof. Plum
+  if (arrayInfo.includes("Plum") || arrayInfo.includes("Professor")) {
+      // win
+      console.log('You: "Madam, I believe it was Professor Plum. I have reason to believe that he hid the weapon in the Conservatory and locked the room with a key which he hid in the room in which he was most comfortable -- the study."');
+      console.log("\n***** CONGRATULATIONS! YOU WIN!!! *****");
+      // energy boost to raise score
+      playerEnergy = playerEnergy + 100;
+  // *Option 2: Mrs. Elizabeth Peacock
+  } else if (arrayInfo.includes("Peacock") || arrayInfo.includes("Elizabeth")) {
+      // lose
+      console.log('You: "The crime was committed by none other than the widowed Elizabeth Peacock. She has shown no indication of appreciation for all the attention John has been providing and she simply became fed up with it."');
+      console.log('Emergency Operator: "I assure you, we are investigating her quite closely. As far as we know, she was the last to see John alive. But thank you for the input."');
+      // neutral guess, no score change
+  // *Option 3: Miss Scarlett
+  } else if (arrayInfo.includes("Scarlett")) {
+      // lose
+      console.log('You: "I daresay the murderer was Miss Scarlett. She was jealous of the attention that Elizabeth Peacock was receiving.');
+      console.log('Emergency Operator: "Ridiculous. Miss Scarlett has plenty of her own suitors."');
+      playerEnergy = playerEnergy - 50;
+  // *Option 4: Colonel Mustard
+  } else if (arrayInfo.includes("Mustard") || arrayInfo.includes("Colonel")) {
+      // lose
+      console.log('You: "Colonel Mustard has been acting suspicious lately... and studying books on war. And he always has that rifle with him."');
+      console.log('Emergency Operator: "You are not the only one to mention that, but his innocence has already been proven. Thank you anyway." *click*');
+      playerEnergy = playerEnergy - 10;
+  // *Option 5: The Reverend Green
+  } else if (arrayInfo.includes("Green") || arrayInfo.includes("Reverend")) {
+      // lose
+      console.log('You: "The murderer was clearly Reverend Green. His cufflinks were found only two rooms away from the murder weapon!');
+      console.log('Emergency Operator: "Preposterous! He was playing pool on the opposite side of the mansion from where the body was found and from where John was last seen alive."');
+      playerEnergy = playerEnergy - 20;
+  // *Option 6: Mrs. White
+  } else if (arrayInfo.includes("White")) {
+      // lose
+      console.log('You: "Madam, I believe it was Mrs. White. The murder was in the kitchen, after all."');
+      console.log('Emergency Operator: "You are being ridiculous. She was out at the store when everything went down. Police were already on the scene when she attempted to return to the kitchen."');
+      playerEnergy = playerEnergy - 50;
+  // *Option 7: John Boddy
+  } else if (arrayInfo.includes("Boddy") || arrayInfo.includes("John")) {
+      // lose
+      console.log('You: "Madam, I believe it was John Boddy."');
+      console.log('Emergency Operator: "Nonsense! He was the one that was murdered. Stop wasting our time." *click*');
+      playerEnergy = playerEnergy - 75;
+  } else {
+      accusationChoice();
+  }
+  playAgain();
+} // end of accusationChoice function
+// end of late game functions
 
 async function play() {
   //* this function will read what action the user wants to take
   // only state player energy if low
   if (playerEnergy <= 20) {
     console.log(`Your energy is getting low.`);
+  } else {
+    // do nothing
   }
   // check if user has won the game or ran out of energy!
   if (inventory.includes(invite) && inventory.includes(guestList) && inventory.includes(lipstick) && inventory.includes(cufflinks) && inventory.includes(loveNote) && inventory.includes(ironKey) && inventory.includes(apron) && inventory.includes(dagger) && inventory.includes(book) && inventory.includes(handFan) && playerEnergy > 0) {
     // if win condition is met
-    console.log("You win!");
-    playAgain();
+    console.log("It looks like you've collected all the items. Maybe you should tell someone?");
+    allItemsCollected = true;
+    play();
   } else if (playerEnergy <= 0) {
     // if energy runs out
     console.log("Sorry, you've run out of energy! Try again next time.");
@@ -463,8 +552,12 @@ async function play() {
       play();
     } else if (arrayChoice.includes("leave") || arrayChoice.includes("exit") || arrayChoice.includes("quit") || arrayChoice.includes("run")) {
       // if user tries to leave the mansion
-      console.log("You can't leave yet! Your curiosity is just beginning to peak, I know it!");
-      play();
+      if (allItemsCollected === true) {
+        console.log("There's one last thing you need to do...")
+      } else {
+        console.log("You can't leave yet! Your curiosity is just beginning to peak, I know it!");
+        play();
+      }
     } else if (arrayChoice.includes("check") && arrayChoice.includes("inventory")) {
       // if user wants to check what is in their inventory
       listInventory();
@@ -472,14 +565,36 @@ async function play() {
     } else if (arrayChoice.includes("call") && currentLocation === mainHall) {
       // if user wants to use the phone in the main hall
       usePhone();
-      //! needs to be tested
     } else {
       // if the user does not select a valid keyword/key phrase
       console.log("I don't know what that is. Try using a keyword or key phrase like 'search', 'look around', 'check inventory', 'pick up', or 'grab from inventory'.");
       play();
     }
   }
-}
+} // end of play function
+
+function resetVal() {
+  // reset global variables
+  currentLocation = frontYard;
+  playerEnergy = 100;
+  inventory = "nothing";
+  iteration = 1;
+  checkableInv = [];
+  allItemsCollected = false;
+  // reset treasures
+  frontYard.treasure = "invitation";
+  mainHall.treasure = "guest list";
+  library.treasure = "book with a yellow handkerchief for a placeholder";
+  study.treasure = "old-fashioned, iron skeleton key";
+  billiardRoom.treasure = "pair of emerald cufflinks engraved with the letter 'G'";
+  ballroom.treasure = "hand-written love note";
+  lounge.treasure = "half-used stick of bright-red lipstick";
+  diningRoom.treasure = "hand fan resembling the feathers of a peacock";
+  kitchen.treasure = "apron";
+  conservatory.treasure = "small dagger";
+  // re-lock conservatory
+  conservatory.locked = true;
+} // end of resetVal function
 
 async function playAgain() {
   // state Score
@@ -487,15 +602,13 @@ async function playAgain() {
   console.log(`\nYour score is ${score}!`);
   // ask user if they want to play again
   let yesNo = await ask("\nWould you like to play again?\n");
-  let chopYN = yesNo[0];
-  let uppercaseYN = chopYN.toUppercase();
+  let arrayYN = yesNo.split("");
+  let chopYN = arrayYN[0];
+  let uppercaseYN = chopYN.toUpperCase();
+  console.log(uppercaseYN);
   if (uppercaseYN === "Y") {
       // reset all settings
-      currentLocation = frontYard;
-      playerEnergy = 100;
-      inventory = "nothing";
-      iteration = 1;
-      checkableInv = [];
+      resetVal();
       // call start function
       start();
   } else if (uppercaseYN === "N") {
@@ -509,12 +622,13 @@ async function playAgain() {
 // set starting position
 let currentLocation = frontYard;
 // set beginning player energy
-let playerEnergy = 0;
+let playerEnergy = 100;
 // set beginning player inventory
 let inventory = "nothing";
 // settings to allow inventory & 'check inventory' to function properly
 let iteration = 1;
 let checkableInv = [];
+let allItemsCollected = false;
 
 start();
 
@@ -526,4 +640,4 @@ function start() {
   console.log(directions);
   console.log('\n-------------------------------');
   play();
-}
+} // end of start function
