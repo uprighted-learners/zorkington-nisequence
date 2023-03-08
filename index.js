@@ -152,34 +152,24 @@ class Room extends Location {
 //* List of Possible Inventory Items:
 
 let invite = new Item("invitation", 2, "The invitation is too smudged and torn to read fully, but you're able to make out the fact that there was a party at this house recently. You can also conclude that there are some vague directions about how to get from the Main Hall to the Dining Room.");
-allItems.push(invite.called);
 
 let guestList = new Item("guest list", 2, "The list reads, 'My dearest Elizabeth, the Reverend Green, the Honorable Colonel Mustard, the lovely Miss Scarlett, and Professor Plum.' You note that each of these names have been crossed off, as if attendance had been taken. A note at the bottom seems to be a reminder to its author to have a 'Mrs. White' obtain the finest rib eye.");
-allItems.push(guestList.called);
 
 let book = new Item("book with yellow handkerchief for a placeholder", -15, "You pick up the book and observe its title is 'War and Peace'. You turn to the spot where the handkerchief sits and begin to read. You find yourself becoming very, very, tired...");
-allItems.push(book.called);
 
 let loveNote = new Item("hand-written love note", 1, "Blech! It's full of mushy love stuff and smells overpoweringly like men's cologne. But you observe that it is signed by the name of 'John Boddy.'");
-allItems.push(loveNote.called);
 
 let ironKey = new Item("old-fashioned, iron skeleton key", 2, "You pick up the key. It reads 'Conservatory.'");
-allItems.push(ironKey.called); // end of readable items
 
 let cufflinks = new Item("pair of emerald cufflinks engraved with the letter 'G'", 0);
-allItems.push(cufflinks.called);
 
 let lipstick = new Item("half-used stick of bright-red lipstick", -5, "It reads, 'Maybelline Sensational Vivids'");
-allItems.push(lipstick.called);
 
 let handFan = new Item("hand fan resembling the feathers of a peacock", 0);
-allItems.push(handFan.called);
 
-let apron = new Item("apron", -5);
-allItems.push(apron.called);
+let apron = new Item("stained apron", -5);
 
 let dagger = new Item("small dagger", 0);
-allItems.push(dagger.called);
 // end of Items
 
 //* List of Rooms:
@@ -200,7 +190,7 @@ let lounge = new Room("Lounge", "The Lounge is a cozy corner on the east side of
 
 let diningRoom = new Room("Dining Room", "The Dining Room is a large room that appears to be paying homage to the Victorian era. The large satin birch table, positioned in the middle of the room, is set for six, but seats ten. An empty buffet lines the northern wall while a china cabinet tucks itself in to the southwestern corner of the room. A small table in the corner hosts an ornate teapot. The lone door in the room will return you to the Eastern Hall.", ["Eastern Hall"], "buffet", "hand fan resembling the feathers of a peacock");
 
-let kitchen = new Room("Kitchen", "The Kitchen is a disaster zone compared to the other rooms you've seen. Pots have boiled over, the sink was left running, and pans are blackened with the ashes of former food. The oven and stove are off now, but you can't help but wonder who was in the middle of cooking dinner? Where did they go? Perhaps they ran out the door through the backyard? What caused them to leave in such an obvious hurry? Finally, you observe that the floor is very wet and dirty. It probably could use a good mopping.", ["Eastern Hall", "Backyard"], "floor", "apron");
+let kitchen = new Room("Kitchen", "The Kitchen is a disaster zone compared to the other rooms you've seen. Pots have boiled over, the sink was left running, and pans are blackened with the ashes of former food. The oven and stove are off now, but you can't help but wonder who was in the middle of cooking dinner? Where did they go? Perhaps they ran out the door through the backyard? What caused them to leave in such an obvious hurry? Finally, you observe that the floor is very wet and dirty. It probably could use a good mopping.", ["Eastern Hall", "Backyard"], "floor", "stained apron");
 
 let conservatory = new Room("Conservatory", "The Conservatory is very warm this time of year with sun pouring in from just about every angle. Even the ceiling is made of windows! With all those windows, there was barely enough room for the single door that you'd come through. The room is otherwise filled with a variety of beautiful houseplants: flowers, ferns, succulents, and even a large venus fly trap.", ["Western Hall"], "venus fly trap", "small dagger");
 conservatory.locked = true;
@@ -209,9 +199,9 @@ conservatory.locked = true;
 
 //* List of Locations
 
-let easternHall = new Location("Eastern Hall", "The Eastern Hall is an L-shaped corridor with four cedar doors: three are adorned with crystal knobs and boast intricate edging. The southernmost door, tucked around the corner, is plain and unassuming. One might assume that the employees of the mansion were the only ones to frequent it.The northernmost door is decorated with a hanging sign reading 'Lounge'.", ["Lounge", "Ballroom", "Dining Room", "Kitchen"]);
+let easternHall = new Location("Eastern Hall", "The Eastern Hall is an L-shaped corridor with four cedar doors: three are adorned with crystal knobs and boast intricate edging. The southernmost door, tucked around the corner, is plain and unassuming. One might assume that the employees of the mansion were the only ones to frequent it. The northernmost door is decorated with a hanging sign reading 'Lounge'.", ["Lounge", "Ballroom", "Dining Room", "Kitchen"]);
 
-let backyard = new Location("Backyard", "The backyard seems to spread several acres from your vantage point. It appears to have been the host of a recent croquet match. Additionally, a single set of polished croquet balls sits alone on the finely-decorated patio just outside of another exterior door on the west side of the building. Perhaps someone didn't make it in time for the game?With all the crime scene tape on the exterior door to the east, it doesn't appear that a rematch will be happening anytime soon.", ["Kitchen", "Western Hall"]);
+let backyard = new Location("Backyard", "The backyard seems to spread several acres from your vantage point. It appears to have been the host of a recent croquet match. Additionally, a single set of polished croquet balls sits alone on the finely-decorated patio just outside of another exterior door on the west side of the building. Perhaps someone didn't make it in time for the game? With all the crime scene tape on the exterior door to the east, it certainly doesn't appear that a rematch will be happening anytime soon.", ["Kitchen", "Western Hall"]);
 
 let westernHall = new Location("Western Hall", "The Western Hall appears to be a short corridor with access to the backyard. Two doors line its brief stretch: one to the north, and the other to the south. You note that the one towards the south has a greenish hue to it, and a picture of a fern is hung there upon it. The northern door looks familiar to you for some reason.", ["Backyard", "Billiard Room", "Conservatory"]);
 // end of Locations
@@ -260,9 +250,11 @@ const itemCall = {
   "handF": handFan,
   "fan": handFan,
   "apron": apron,
+  "stain": apron,
   "dagge": dagger,
   "small": dagger,
-  "dust": "dust bunnies"
+  "dust": "dust bunnies",
+  "dust ": "dust bunnies"
 }
 // end of State Machines
 
@@ -498,6 +490,7 @@ async function accusationChoice() {
       playerEnergy = playerEnergy - 75;
   } else {
       accusationChoice();
+      //! IDK why the question displays twice
   }
   playAgain();
 } // end of accusationChoice function
@@ -512,10 +505,11 @@ async function play() {
     // do nothing
   }
   // check if user has won the game or ran out of energy!
-  if (inventory.includes(invite) && inventory.includes(guestList) && inventory.includes(lipstick) && inventory.includes(cufflinks) && inventory.includes(loveNote) && inventory.includes(ironKey) && inventory.includes(apron) && inventory.includes(dagger) && inventory.includes(book) && inventory.includes(handFan) && playerEnergy > 0) {
+  if (inventory.includes(invite) && inventory.includes(guestList) && inventory.includes(lipstick) && inventory.includes(cufflinks) && inventory.includes(loveNote) && inventory.includes(ironKey) && inventory.includes(apron) && inventory.includes(dagger) && inventory.includes(book) && inventory.includes(handFan) && playerEnergy > 0 && iteration == 2) {
     // if win condition is met
-    console.log("It looks like you've collected all the items. Maybe you should tell someone?");
+    console.log("\nIt looks like you've collected all the items. Maybe you should tell someone?");
     allItemsCollected = true;
+    iteration++;
     play();
   } else if (playerEnergy <= 0) {
     // if energy runs out
@@ -590,10 +584,18 @@ function resetVal() {
   ballroom.treasure = "hand-written love note";
   lounge.treasure = "half-used stick of bright-red lipstick";
   diningRoom.treasure = "hand fan resembling the feathers of a peacock";
-  kitchen.treasure = "apron";
+  kitchen.treasure = "stained apron";
   conservatory.treasure = "small dagger";
   // re-lock conservatory
   conservatory.locked = true;
+  // reset Item usage
+  invite.used = false;
+  guestList.used = false;
+  book.used = false;
+  loveNote.used = false;
+  ironKey.used = false;
+  lipstick.used = false;
+  apron.used = false;
 } // end of resetVal function
 
 async function playAgain() {
