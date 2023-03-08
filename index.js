@@ -16,14 +16,16 @@ function ask(questionText) {
     - Objects
     - Dictionaries
     - Functions
-      - Item Functions
-      - Room Functions
+      - Item-Based Functions
+      - Room-Based Functions
       - Late Game Functions
       - Play & PlayAgain Function
     - Default Settings
     - Start Function
 */
 
+//* Classes
+// ---------------------
 //* Item Class:
 class Item {
   constructor(findable, value, readable) {
@@ -150,7 +152,7 @@ class Room extends Location {
 } // end of Room Class
 
 //* List of Possible Inventory Items:
-
+// ---------------------
 let invite = new Item("invitation", 2, "The invitation is too smudged and torn to read fully, but you're able to make out the fact that there was a party at this house recently. You can also conclude that there are some vague directions about how to get from the Main Hall to the Dining Room.");
 
 let guestList = new Item("guest list", 2, "The list reads, 'My dearest Elizabeth, the Reverend Green, the Honorable Colonel Mustard, the lovely Miss Scarlett, and Professor Plum.' You note that each of these names have been crossed off, as if attendance had been taken. A note at the bottom seems to be a reminder to its author to have a 'Mrs. White' obtain the finest rib eye.");
@@ -173,7 +175,7 @@ let dagger = new Item("small dagger", 0);
 // end of Items
 
 //* List of Rooms:
-
+// ---------------------
 let frontYard = new Room("Front Yard", "The Front Yard is finely manicured and adorned with hedges, flower beds, and a stone walkway. One might assume that the gardener had just visited within the last day or two. One also couldn't help but notice the towering mansion that the yard belongs to, boasting stained-glass windows and a grand arch over its tall, dark chestnut door. Centered on the door was a perfectly-round golden door knocker, merely a tease to anyone who thought they might be tall enough to reach it.", ["Main Hall"], "hedges", "invitation");
 
 let mainHall = new Room("Main Hall", "The Main Hall is a grand entrance to the mansion featuring dazzling chandelier hanging from its vaulted ceiling. The ceiling is edged by beautiful crown molding. Within the room lies a single table with one drawer and a telephone. Your eye is drawn to the immaculate doors pointing to the west and south. The western door is smaller than its counterpart -- perhaps it leads to a library or something of that nature?", ["Library", "Ballroom", "Front Yard"], "table", "guest list");
@@ -198,7 +200,7 @@ conservatory.locked = true;
 // end of Rooms
 
 //* List of Locations
-
+// ---------------------
 let easternHall = new Location("Eastern Hall", "The Eastern Hall is an L-shaped corridor with four cedar doors: three are adorned with crystal knobs and boast intricate edging. The southernmost door, tucked around the corner, is plain and unassuming. One might assume that the employees of the mansion were the only ones to frequent it. The northernmost door is decorated with a hanging sign reading 'Lounge'.", ["Lounge", "Ballroom", "Dining Room", "Kitchen"]);
 
 let backyard = new Location("Backyard", "The backyard seems to spread several acres from your vantage point. It appears to have been the host of a recent croquet match. Additionally, a single set of polished croquet balls sits alone on the finely-decorated patio just outside of another exterior door on the west side of the building. Perhaps someone didn't make it in time for the game? With all the crime scene tape on the exterior door to the east, it certainly doesn't appear that a rematch will be happening anytime soon.", ["Kitchen", "Western Hall"]);
@@ -207,6 +209,7 @@ let westernHall = new Location("Western Hall", "The Western Hall appears to be a
 // end of Locations
 
 //* Dictionaries
+// ---------------------
 const reverseCall = {
   //returns Object Room variable names for modified user input
   "fron": frontYard,
@@ -256,7 +259,7 @@ const itemCall = {
   "dust": "dust bunnies",
   "dust ": "dust bunnies"
 }
-// end of State Machines
+// end of Dictionaries
 
 //* Item-Based Functions
 // ---------------------
@@ -296,6 +299,13 @@ function listInventory() {
     checkableInv = [...inventory];
     checkableInv.forEach(invItem => console.log("..." + invItem["called"]));
   }
+}
+
+async function findReadable() {
+  // after we have determined the user wants to read an item, ask which item
+  let readResponse = await ask("Which item do you want?\n");
+  // run convertItemResponse function which edits and analyzes user response
+  convertItemResponse(readResponse);
 }
 
 //* Item Answer Function
@@ -339,14 +349,10 @@ async function convertItemResponse(inputItem) {
     play();
   }
 } // end of convertItemResponse function
+// end of all Item-Based Functions
 
-async function findReadable() {
-  // after we have determined the user wants to read an item, ask which item
-  let readResponse = await ask("Which item do you want?\n");
-  // run convertItemResponse function which edits and analyzes user response
-  convertItemResponse(readResponse);
-} // end of all Item-Based Functions
-
+//* Room-Based Functions
+// ---------------------
 //* Room Answer Function (& Change Room if Allowed)
 // analyzes rooms as moveable or not moveable
 function convertRoomResponse(inputRoom) {
@@ -379,8 +385,6 @@ function convertRoomResponse(inputRoom) {
   }
 } // end of convertRoomResponse function
 
-//* Room-Based Functions
-// ---------------------
 async function moveRoom() {
   // after we have determined the user wants to move, ask where
   let moveResponse = await ask("Where do you want to go?\n");
@@ -496,6 +500,8 @@ async function accusationChoice() {
 } // end of accusationChoice function
 // end of late game functions
 
+//* Play & Play Again Functions
+// ---------------------
 async function play() {
   //* this function will read what action the user wants to take
   // only state player energy if low
@@ -559,6 +565,10 @@ async function play() {
     } else if (arrayChoice.includes("call") && currentLocation === mainHall) {
       // if user wants to use the phone in the main hall
       usePhone();
+    } else if (arrayChoice.includes("call") && currentLocation !== mainHall) {
+      // if user wants to use the phone & is not in the main hall
+      console.log("Bummer, you left your cell phone at home today...");
+      play();
     } else {
       // if the user does not select a valid keyword/key phrase
       console.log("I don't know what that is. Try using a keyword or key phrase like 'search', 'look around', 'check inventory', 'pick up', or 'grab from inventory'.");
@@ -621,6 +631,8 @@ async function playAgain() {
   }
 } // end of playAgain function
 
+//* Default Settings
+// ---------------------
 // set starting position
 let currentLocation = frontYard;
 // set beginning player energy
@@ -632,8 +644,8 @@ let iteration = 1;
 let checkableInv = [];
 let allItemsCollected = false;
 
+//* Start Function
 start();
-
 function start() {
   // the function that starts it all!
   const welcomeMessage = `You are standing in the front yard of a grand mansion. While neither completely abandoned nor haunted, it holds an eerie aura about it, as if it has a story to tell you.\nNo one appears to be home right now. The front door towers in front of you tauntingly, daring you to enter. Do you dare go in?`;
