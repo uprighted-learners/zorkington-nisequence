@@ -9,21 +9,8 @@ function ask(questionText) {
   });
 }
 
-function usePhone() {
-    // check that all items are the inventory
-    if (inventory.includes(invite) && inventory.includes(guestList) && inventory.includes(lipstick) && inventory.includes(cufflinks) && inventory.includes(loveNote) && inventory.includes(ironKey) && inventory.includes(apron) && inventory.includes(dagger) && inventory.includes(book) && inventory.includes(handFan)) {
-        // phone works
-        callPolice();
-    } else {
-        // police come
-        console.log("\nAs soon as you pick up the phone, you hear sirens surrounding the mansion. You immediately hear a megaphone blasting, 'Come out with your hands up!'");
-        console.log("You are arrested for trespassing on private property.");
-        playAgain();
-    }
-};
-
 //* ---------------------------------------
-//! TESTING
+//! TESTING FILE
 callPolice();
 //* ---------------------------------------
 
